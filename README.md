@@ -1,7 +1,4 @@
-# Personal User Acquisition Analytics Portfolio Project
-
-A comprehensive dbt project demonstrating advanced analytics engineering skills, featuring performance optimizations, data governance, and ML-powered campaign analysis.
-
+# User Acquisition Analytics Portfolio Project
 ## Project Overview
 
 This is a **personal portfolio project** showcasing my ability to build production-grade data pipelines for user acquisition analytics. The project processes advertising campaign data to provide insights into campaign performance, user acquisition metrics, and revenue optimization.
@@ -260,15 +257,11 @@ This is a personal portfolio project, but I welcome feedback and suggestions for
 - Fork and experiment with the code
 - Use it as a learning resource
 
-## License
-
-This project is open source and available for educational purposes.
-
 ## Connect
 
-- **GitHub**: [\[Your GitHub Profile\]](https://github.com/fefecoding)
-- **LinkedIn**: [\[Your LinkedIn Profile\]](https://www.linkedin.com/in/trannammai/)
+- **GitHub**: [\[fefecoding\]](https://github.com/fefecoding)
+- **LinkedIn**: [\[trannammai\]](https://www.linkedin.com/in/trannammai/)
 
 ---
 
-*Built with ❤️ by [Your Name] - Analytics Engineer*
+*Built with ❤️ by Nam Mai TRAN (Félix) - Analytics Engineer*
