@@ -5,6 +5,8 @@ with campaigns as (
 )
 
 select
-    row_number() over() as campaign_id,
-    campaign_name
+    {{ dbt_utils.generate_surrogate_key(['campaign_name']) }} as campaign_id,
+    campaign_name,
+    {{ dbt_date.now() }} as created_at,
+    {{ dbt_date.now() }} as updated_at
 from campaigns

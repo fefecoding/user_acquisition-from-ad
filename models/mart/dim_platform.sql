@@ -5,6 +5,8 @@ with platforms as (
 )
 
 select
-    row_number() over() as platform_id,
-    platform
+    {{ dbt_utils.generate_surrogate_key(['platform']) }} as platform_id,
+    platform,
+    {{ dbt_date.now() }} as created_at,
+    {{ dbt_date.now() }} as updated_at
 from platforms
