@@ -1,0 +1,117 @@
+version: 2
+
+tests:
+  - name: test_campaign_performance_data_quality
+    description: "Test data quality for campaign performance table"
+    query: |
+      select 
+        count(*) as total_records,
+        sum(case when campaign_id is null then 1 else 0 end) as null_campaign_ids,
+        sum(case when network_id is null then 1 else 0 end) as null_network_ids,
+        sum(case when platform_id is null then 1 else 0 end) as null_platform_ids,
+        sum(case when total_revenue < 0 then 1 else 0 end) as negative_revenue,
+        sum(case when total_spend < 0 then 1 else 0 end) as negative_spend,
+        sum(case when roas < 0 then 1 else 0 end) as negative_roas
+      from {{ ref('fact_campaign_performance') }}
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_spend_data_consistency
+    description: "Test spend data consistency"
+    query: |
+      select 
+        count(*) as total_records,
+        sum(case when spend_id is null then 1 else 0 end) as null_spend_ids,
+        sum(case when date is null then 1 else 0 end) as null_dates,
+        sum(case when spend < 0 then 1 else 0 end) as negative_spend,
+        sum(case when platform not in ('android', 'ios') then 1 else 0 end) as invalid_platforms
+      from {{ ref('stg_spend') }}
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_user_data_quality
+    description: "Test user data quality"
+    query: |
+      select 
+        count(*) as total_records,
+        sum(case when user_id is null then 1 else 0 end) as null_user_ids,
+        sum(case when adid is null then 1 else 0 end) as null_adids,
+        sum(case when install_date is null then 1 else 0 end) as null_install_dates,
+        sum(case when platform not in ('android', 'ios') then 1 else 0 end) as invalid_platforms,
+        sum(case when tracking_status not in ('Opt in', 'Opt out') then 1 else 0 end) as invalid_tracking_status
+      from {{ ref('stg_user_data') }}
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_referential_integrity
+    description: "Test referential integrity between fact and dimension tables"
+    query: |
+      select 
+        count(*) as total_records,
+        sum(case when c.campaign_id is null then 1 else 0 end) as orphaned_campaigns,
+        sum(case when n.network_id is null then 1 else 0 end) as orphaned_networks,
+        sum(case when p.platform_id is null then 1 else 0 end) as orphaned_platforms
+      from {{ ref('fact_campaign_performance') }} f
+      left join {{ ref('dim_campaign') }} c on f.campaign_id = c.campaign_id
+      left join {{ ref('dim_network') }} n on f.network_id = n.network_id
+      left join {{ ref('dim_platform') }} p on f.platform_id = p.platform_id
+    config:
+      severity: error
+      store_failures: true
+
+  - name: test_campaign_performance_tier_logic
+    description: "Test campaign performance tier classification logic"
+    query: |
+      select 
+        count(*) as total_campaigns,
+        sum(case when roas_tier not in ('Tier 1 - Excellent', 'Tier 2 - Good', 'Tier 3 - Average', 'Tier 4 - Poor') then 1 else 0 end) as invalid_roas_tiers,
+        sum(case when revenue_tier not in ('High Revenue', 'Medium Revenue', 'Low Revenue', 'Very Low Revenue') then 1 else 0 end) as invalid_revenue_tiers,
+        sum(case when recommended_action not in ('Scale up - Increase budget', 'Optimize - Maintain budget, improve targeting', 'Review - Reduce budget, analyze performance', 'Pause - Poor performance, reallocate budget') then 1 else 0 end) as invalid_actions
+      from {{ ref('dim_campaign_performance_tier') }}
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_date_dimension_completeness
+    description: "Test date dimension completeness for required date range"
+    query: |
+      select 
+        count(*) as total_dates,
+        min(date) as min_date,
+        max(date) as max_date,
+        count(case when day_of_week is null then 1 end) as null_day_of_week,
+        count(case when season is null then 1 end) as null_seasons
+      from {{ ref('dim_date') }}
+      where date >= current_date() - interval '1 year'
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_fact_campaign_daily_partitioning
+    description: "Test that fact_campaign_daily has proper date partitioning"
+    query: |
+      select 
+        count(distinct date) as distinct_dates,
+        min(date) as min_date,
+        max(date) as max_date,
+        count(*) as total_records
+      from {{ ref('fact_campaign_daily') }}
+      where date >= current_date() - interval '30 days'
+    config:
+      severity: warn
+      store_failures: true
+
+  - name: test_data_quality_score_calculation
+    description: "Test data quality score calculation logic"
+    query: |
+      select 
+        count(*) as total_checks,
+        sum(case when data_quality_score < 0 or data_quality_score > 100 then 1 else 0 end) as invalid_scores,
+        sum(case when data_quality_status not in ('Excellent', 'Good', 'Fair', 'Poor') then 1 else 0 end) as invalid_statuses
+      from {{ ref('governance_data_quality') }}
+    config:
+      severity: warn
+      store_failures: true

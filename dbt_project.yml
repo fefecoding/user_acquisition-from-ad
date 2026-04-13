@@ -1,16 +1,8 @@
-
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
 name: 'voodoo_case'
 version: '1.0.0'
 
-# This setting configures which "profile" dbt uses for this project.
 profile: 'voodoo_case'
 
-# These configurations specify where dbt should look for different types of files.
-# The `model-paths` config, for example, states that models in this project can be
-# found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
@@ -18,39 +10,100 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-clean-targets:         # directories to be removed by `dbt clean`
+clean-targets:
   - "target"
   - "dbt_packages"
 
-
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
-
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
 models:
   voodoo_case:
-    # Config indicated by + and applies to all files under models/example/
-    example:
+    +materialized: view
+    
+    staging:
       +materialized: view
+      
+    mart:
+      +materialized: table
+      
+      # Performance optimizations
+      fact_campaign_daily:
+        +materialized: incremental
+        +unique_key: campaign_daily_id
+        +incremental_strategy: merge
+        +partition_by:
+          field: date
+          data_type: date
+          granularity: day
+        +cluster_by: ["platform_id", "network_id", "campaign_id"]
+        
+      fact_campaign_performance:
+        +materialized: table
+        +unique_key: campaign_performance_id
+        
+      fact_campaign_summary:
+        +materialized: table
+        +unique_key: summary_id
+        
+      dim_campaign:
+        +materialized: table
+        +unique_key: campaign_id
+        
+      dim_network:
+        +materialized: table
+        +unique_key: network_id
+        
+      dim_platform:
+        +materialized: table
+        +unique_key: platform_id
+        
+      dim_date:
+        +materialized: table
+        +unique_key: date_id
+        
+      dim_campaign_performance_tier:
+        +materialized: table
+        +unique_key: performance_tier_id
+        
+    governance:
+      +materialized: table
+      
+      governance_data_quality:
+        +unique_key: quality_check_id
+        
+      governance_data_lineage:
+        +unique_key: lineage_id
 
-# Seed configuration
 seeds:
   voodoo_case:
     spend:
-      file: seeds/spend.csv
-      header: true
-      delimiter: ','
+      +file: seeds/spend.csv
+      +header: true
+      +delimiter: ','
     user_data:
-      file: seeds/user_data.csv
-      header: true
-      delimiter: ','
+      +file: seeds/user_data.csv
+      +header: true
+      +delimiter: ','
     dim_cv_bucket:
-      file: seeds/dim_cv_bucket.csv
-      header: true
-      delimiter: ','
+      +file: seeds/dim_cv_bucket.csv
+      +header: true
+      +delimiter: ','
     campaign_analysis:
-      file: seeds/campaign_analysis.csv
-      header: true
-      delimiter: ','
+      +file: seeds/campaign_analysis.csv
+      +header: true
+      +delimiter: ','
+
+# Data quality tests configuration
+tests:
+  voodoo_case:
+    +severity: warn
+    +store_failures: true
+    +fail_calc: count(*)
+    +limit: 1000
+
+# On-run-start hooks for data governance
+on-run-start:
+  - "{{ log('Starting dbt run - Performance and Governance Optimized', info=True) }}"
+  - "ALTER SESSION SET QUERY_TAG = 'voodoo_case_{{ run_started_at }}'"
+
+# On-run-end hooks
+on-run-end:
+  - "{{ log('dbt run completed successfully', info=True) }}"
