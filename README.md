@@ -238,30 +238,8 @@ ORDER BY cs.campaign_health_score DESC;
 - ✅ Code organization
 - ✅ Version control best practices
 
-## About This Project
-
-This is a **personal portfolio project** created to demonstrate advanced analytics engineering capabilities. It showcases my ability to:
-
-1. Design and implement complex data models
-2. Optimize performance for large datasets
-3. Implement data governance frameworks
-4. Integrate ML models with analytics pipelines
-5. Build production-ready data solutions
-
-The project uses simulated advertising campaign data to demonstrate real-world analytics scenarios that businesses face when managing user acquisition across multiple platforms and networks.
-
-## Contributing
-
-This is a personal portfolio project, but I welcome feedback and suggestions for improvement. Feel free to:
-- Open issues for bugs or suggestions
-- Fork and experiment with the code
-- Use it as a learning resource
 
 ## Connect
 
 - **GitHub**: [\[fefecoding\]](https://github.com/fefecoding)
 - **LinkedIn**: [\[trannammai\]](https://www.linkedin.com/in/trannammai/)
-
----
-
-*Built with ❤️ by Nam Mai TRAN (Félix) - Analytics Engineer*

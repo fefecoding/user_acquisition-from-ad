@@ -87,6 +87,60 @@ models:
       - name: updated_at
         description: Timestamp when record was last updated
 
+  - name: dim_campaign_performance_tier
+    description: Campaign performance tier classification
+    columns:
+      - name: performance_tier_id
+        description: Surrogate key for performance tier
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        description: Foreign key to campaign dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_id
+      - name: roas
+        description: Return on Ad Spend
+        tests:
+          - not_null
+      - name: arpu
+        description: Average Revenue Per User
+        tests:
+          - not_null
+      - name: total_revenue
+        description: Total campaign revenue
+        tests:
+          - not_null
+      - name: roas_tier
+        description: ROAS-based performance tier
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Tier 1 - Excellent', 'Tier 2 - Good', 'Tier 3 - Average', 'Tier 4 - Poor']
+      - name: revenue_tier
+        description: Revenue-based performance tier
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Revenue', 'Medium Revenue', 'Low Revenue', 'Very Low Revenue']
+      - name: performance_score
+        description: Overall performance score (0-100)
+        tests:
+          - not_null
+      - name: recommended_action
+        description: Recommended action based on performance
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Scale up - Increase budget', 'Optimize - Maintain budget, improve targeting', 'Review - Reduce budget, analyze performance', 'Pause - Poor performance, reallocate budget']
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
   - name: fact_campaign_performance
     description: Fact table containing campaign performance metrics
     columns:
@@ -179,6 +233,491 @@ models:
           - relationships:
               to: ref('stg_campaign_metrics')
               field: high_roas_prob
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_campaign_daily
+    description: Daily campaign performance metrics with partitioning
+    columns:
+      - name: campaign_daily_id
+        description: Surrogate key for daily campaign record
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        description: Foreign key to campaign dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_id
+      - name: network_id
+        description: Foreign key to network dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_network')
+              field: network_id
+      - name: platform_id
+        description: Foreign key to platform dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_platform')
+              field: platform_id
+      - name: date_id
+        description: Foreign key to date dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_id
+      - name: date
+        description: Calendar date for daily metrics
+        tests:
+          - not_null
+      - name: daily_users
+        description: Number of users acquired on this date
+        tests:
+          - not_null
+      - name: daily_revenue
+        description: Revenue generated on this date
+        tests:
+          - not_null
+      - name: daily_spend
+        description: Spend on this date
+        tests:
+          - not_null
+      - name: daily_roas
+        description: Return on Ad Spend for this date
+        tests:
+          - not_null
+      - name: daily_arpu
+        description: Average Revenue Per User for this date
+        tests:
+          - not_null
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_campaign_summary
+    description: Aggregated campaign performance summary
+    columns:
+      - name: summary_id
+        description: Surrogate key for campaign summary
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        description: Foreign key to campaign dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_id
+      - name: network_id
+        description: Foreign key to network dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_network')
+              field: network_id
+      - name: platform_id
+        description: Foreign key to platform dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_platform')
+              field: platform_id
+      - name: campaign_name
+        description: Campaign name
+        tests:
+          - not_null
+      - name: network_name
+        description: Network name
+        tests:
+          - not_null
+      - name: platform
+        description: Platform (android/ios)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['android', 'ios']
+      - name: total_revenue
+        description: Total campaign revenue
+        tests:
+          - not_null
+      - name: total_users
+        description: Total users acquired
+        tests:
+          - not_null
+      - name: total_spend
+        description: Total spend
+        tests:
+          - not_null
+      - name: last_30d_revenue
+        description: Revenue from last 30 days
+        tests:
+          - not_null
+      - name: last_30d_users
+        description: Users from last 30 days
+        tests:
+          - not_null
+      - name: last_30d_spend
+        description: Spend from last 30 days
+        tests:
+          - not_null
+      - name: avg_30d_roas
+        description: Average ROAS from last 30 days
+        tests:
+          - not_null
+      - name: revenue_growth_rate
+        description: Revenue growth rate
+        tests:
+          - not_null
+      - name: campaign_health_score
+        description: Overall campaign health score (0-100)
+        tests:
+          - not_null
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_user_cohort_analysis
+    description: User cohort analysis with LTV and retention metrics
+    columns:
+      - name: cohort_analysis_id
+        description: Surrogate key for cohort analysis
+        tests:
+          - unique
+          - not_null
+      - name: cohort_month
+        description: Cohort month (month of first install)
+        tests:
+          - not_null
+      - name: platform
+        description: Platform for the cohort
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['android', 'ios']
+      - name: cohort_size
+        description: Number of users in the cohort
+        tests:
+          - not_null
+      - name: total_cohort_revenue
+        description: Total revenue from the cohort
+        tests:
+          - not_null
+      - name: initial_arpu
+        description: Average Revenue Per User at cohort start
+        tests:
+          - not_null
+      - name: ltv_current
+        description: Current Lifetime Value
+        tests:
+          - not_null
+      - name: ltv_3m_projected
+        description: Projected LTV at 3 months
+        tests:
+          - not_null
+      - name: ltv_6m_projected
+        description: Projected LTV at 6 months
+        tests:
+          - not_null
+      - name: ltv_12m_projected
+        description: Projected LTV at 12 months
+        tests:
+          - not_null
+      - name: retention_rate
+        description: User retention rate
+        tests:
+          - not_null
+      - name: cohort_quality_score
+        description: Overall cohort quality score (0-100)
+        tests:
+          - not_null
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_multi_touch_attribution
+    description: Multi-touch attribution analysis across different models
+    columns:
+      - name: attribution_id
+        description: Surrogate key for attribution analysis
+        tests:
+          - unique
+          - not_null
+      - name: platform
+        description: Platform for attribution
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['android', 'ios']
+      - name: campaign_name
+        description: Campaign name
+        tests:
+          - not_null
+      - name: network_name
+        description: Network name
+        tests:
+          - not_null
+      - name: first_touch_users
+        description: Users attributed to first touch
+        tests:
+          - not_null
+      - name: first_touch_revenue
+        description: Revenue attributed to first touch
+        tests:
+          - not_null
+      - name: first_touch_roas
+        description: ROAS for first touch attribution
+        tests:
+          - not_null
+      - name: last_touch_users
+        description: Users attributed to last touch
+        tests:
+          - not_null
+      - name: last_touch_revenue
+        description: Revenue attributed to last touch
+        tests:
+          - not_null
+      - name: last_touch_roas
+        description: ROAS for last touch attribution
+        tests:
+          - not_null
+      - name: linear_users
+        description: Users attributed via linear model
+        tests:
+          - not_null
+      - name: linear_revenue
+        description: Revenue attributed via linear model
+        tests:
+          - not_null
+      - name: linear_roas
+        description: ROAS for linear attribution
+        tests:
+          - not_null
+      - name: time_decay_users
+        description: Users attributed via time-decay model
+        tests:
+          - not_null
+      - name: time_decay_revenue
+        description: Revenue attributed via time-decay model
+        tests:
+          - not_null
+      - name: time_decay_roas
+        description: ROAS for time-decay attribution
+        tests:
+          - not_null
+      - name: position_users
+        description: Users attributed via position-based model
+        tests:
+          - not_null
+      - name: position_revenue
+        description: Revenue attributed via position-based model
+        tests:
+          - not_null
+      - name: position_roas
+        description: ROAS for position-based attribution
+        tests:
+          - not_null
+      - name: recommended_model
+        description: Recommended attribution model
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Position-based (assisted conversions important)', 'Linear (multi-touch journey common)', 'Time-decay (recent interactions matter)', 'Last-touch (direct response dominant)']
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_budget_optimization
+    description: Budget optimization recommendations and simulations
+    columns:
+      - name: optimization_id
+        description: Surrogate key for budget optimization
+        tests:
+          - unique
+          - not_null
+      - name: campaign_name
+        description: Campaign name
+        tests:
+          - not_null
+      - name: network_name
+        description: Network name
+        tests:
+          - not_null
+      - name: platform
+        description: Platform (android/ios)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['android', 'ios']
+      - name: total_spend
+        description: Current total spend
+        tests:
+          - not_null
+      - name: efficiency_score
+        description: Campaign efficiency score (0-100)
+        tests:
+          - not_null
+      - name: budget_recommendation
+        description: Budget allocation recommendation
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Scale Up', 'Maintain', 'Optimize', 'Reduce']
+      - name: recommended_spend
+        description: Recommended spend amount
+        tests:
+          - not_null
+      - name: spend_change
+        description: Change in spend from current
+        tests:
+          - not_null
+      - name: expected_roas
+        description: Expected ROAS with recommended spend
+        tests:
+          - not_null
+      - name: projected_revenue
+        description: Projected revenue with optimization
+        tests:
+          - not_null
+      - name: projected_profit
+        description: Projected profit with optimization
+        tests:
+          - not_null
+      - name: roi_improvement_percent
+        description: ROI improvement percentage
+        tests:
+          - not_null
+      - name: allocation_priority
+        description: Budget allocation priority level
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Priority', 'Medium Priority', 'Low Priority', 'Review Required']
+      - name: risk_level
+        description: Risk level of optimization
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low Risk', 'Medium Risk', 'High Risk']
+      - name: created_at
+        description: Timestamp when record was created
+      - name: updated_at
+        description: Timestamp when record was last updated
+
+  - name: fact_seasonality_analysis
+    description: Seasonal patterns and time-based performance analysis
+    columns:
+      - name: seasonality_id
+        description: Surrogate key for seasonality analysis
+        tests:
+          - unique
+          - not_null
+      - name: platform
+        description: Platform for seasonality analysis
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['android', 'ios']
+      - name: network_name
+        description: Network name
+        tests:
+          - not_null
+      - name: campaign_name
+        description: Campaign name
+        tests:
+          - not_null
+      - name: season
+        description: Season (Winter, Spring, Summer, Fall)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Winter', 'Spring', 'Summer', 'Fall']
+      - name: days_in_season
+        description: Number of days analyzed in season
+        tests:
+          - not_null
+      - name: seasonal_revenue
+        description: Total revenue in season
+        tests:
+          - not_null
+      - name: seasonal_spend
+        description: Total spend in season
+        tests:
+          - not_null
+      - name: avg_seasonal_roas
+        description: Average ROAS in season
+        tests:
+          - not_null
+      - name: seasonal_performance_index
+        description: Performance index relative to average (100 = average)
+        tests:
+          - not_null
+      - name: day_of_week
+        description: Day of week
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+      - name: dow_avg_revenue
+        description: Average daily revenue for day of week
+        tests:
+          - not_null
+      - name: dow_avg_roas
+        description: Average ROAS for day of week
+        tests:
+          - not_null
+      - name: month
+        description: Calendar month (1-12)
+        tests:
+          - not_null
+      - name: monthly_revenue
+        description: Total monthly revenue
+        tests:
+          - not_null
+      - name: mom_growth_percent
+        description: Month-over-month growth percentage
+        tests:
+          - not_null
+      - name: week_of_year
+        description: Week number of the year
+        tests:
+          - not_null
+      - name: week_performance_tier
+        description: Performance tier for the week
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Performance Week', 'Low Performance Week', 'Average Week']
+      - name: special_period
+        description: Special time period (Holiday, etc.)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Holiday Season Weekend', 'Holiday Season', 'Black Friday Period', 'New Year Weekend', 'Summer Weekend', 'Regular Period']
+      - name: season_classification
+        description: Classification of season performance
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Peak Season', 'Good Season', 'Average Season', 'Low Season']
+      - name: day_classification
+        description: Classification of day performance
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Best Day', 'Good Day', 'Average Day', 'Poor Day']
       - name: created_at
         description: Timestamp when record was created
       - name: updated_at
