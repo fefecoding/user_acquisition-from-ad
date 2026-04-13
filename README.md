@@ -1,16 +1,20 @@
-# Voodoo User Acquisition Analytics - dbt Project
+# Personal User Acquisition Analytics Portfolio Project
 
-A comprehensive dbt project for user acquisition analytics from advertising campaigns, featuring performance optimizations and data governance.
+A comprehensive dbt project demonstrating advanced analytics engineering skills, featuring performance optimizations, data governance, and ML-powered campaign analysis.
 
 ## Project Overview
 
-This project processes advertising campaign data to provide insights into user acquisition performance, including:
-- Campaign performance metrics (ROAS, ARPU, conversion rates)
-- Daily performance tracking with partitioned tables
-- Data quality monitoring and governance
-- Campaign health scoring and tier classification
+This is a **personal portfolio project** showcasing my ability to build production-grade data pipelines for user acquisition analytics. The project processes advertising campaign data to provide insights into campaign performance, user acquisition metrics, and revenue optimization.
 
-## Architecture
+### Key Features Demonstrated
+
+✅ **Advanced dbt Modeling** - Multi-layer architecture with staging, mart, and governance layers  
+✅ **Performance Optimization** - Partitioning, clustering, and incremental models  
+✅ **Data Governance** - Automated quality monitoring and lineage tracking  
+✅ **ML Integration** - Campaign forecasting and performance classification  
+✅ **Production-Ready** - Comprehensive testing and documentation  
+
+## Technical Architecture
 
 ### Data Model Layers
 
@@ -28,31 +32,32 @@ This project processes advertising campaign data to provide insights into user a
                                                └─────────────────┘
 ```
 
-### Models
+### Models Overview
 
-#### Staging Layer
+#### Staging Layer (Raw → Clean)
 - `stg_spend` - Advertising spend data (incremental)
-- `stg_user_data` - User acquisition data (incremental)
+- `stg_user_data` - User acquisition data (incremental)  
 - `stg_campaign_metrics` - Campaign metrics from ML analysis
 - `stg_dim_cv_bucket` - Conversion value bucket mapping
 
-#### Mart Layer - Dimensions
+#### Mart Layer (Business Logic)
+**Dimensions:**
 - `dim_campaign` - Campaign dimension with hash-based surrogate keys
 - `dim_network` - Network dimension
 - `dim_platform` - Platform dimension (android/ios)
 - `dim_date` - Date dimension with time attributes
 - `dim_campaign_performance_tier` - Campaign performance classification
 
-#### Mart Layer - Facts
+**Facts:**
 - `fact_campaign_performance` - Campaign performance metrics
 - `fact_campaign_daily` - Daily performance (partitioned by date, clustered)
 - `fact_campaign_summary` - Aggregated performance summary
 
-#### Governance Layer
+#### Governance Layer (Data Quality)
 - `governance_data_quality` - Data quality monitoring and scoring
 - `governance_data_lineage` - Data lineage documentation
 
-## Performance Optimizations
+## Performance Optimizations Implemented
 
 ### 1. Partitioning & Clustering
 ```sql
@@ -77,7 +82,7 @@ cluster_by: ["platform_id", "network_id", "campaign_id"]
 - Uses `dbt_utils.generate_surrogate_key()` for consistent keys
 - Better performance than row_number() for large datasets
 
-## Data Governance
+## Data Governance Features
 
 ### Data Quality Framework
 - Automated data quality checks for all tables
@@ -189,18 +194,81 @@ JOIN dim_campaign c ON cs.campaign_id = c.campaign_id
 ORDER BY cs.campaign_health_score DESC;
 ```
 
+## Project Structure
+
+```
+.
+├── models/
+│   ├── staging/           # Raw data transformation
+│   ├── mart/              # Business logic
+│   │   ├── dimensions/    # Dimension tables
+│   │   └── facts/         # Fact tables
+│   └── governance/        # Data quality & lineage
+├── seeds/                 # Static reference data
+├── tests/                 # Data quality tests
+├── notebook/              # ML analysis notebooks
+├── dbt_project.yml        # dbt configuration
+├── dbt_packages.yml       # Package dependencies
+└── README.md              # This file
+```
+
+## Technologies Used
+
+- **dbt Core** - Data transformation and modeling
+- **BigQuery** - Data warehouse
+- **Python** - ML analysis and forecasting
+- **dbt_utils** - Utility macros and functions
+- **dbt_date** - Date handling utilities
+
+## What This Project Demonstrates
+
+### Technical Skills
+- ✅ Advanced dbt modeling patterns
+- ✅ Performance optimization techniques
+- ✅ Data governance implementation
+- ✅ ML integration with analytics
+- ✅ Production-ready code quality
+
+### Business Acumen
+- ✅ User acquisition analytics
+- ✅ Campaign performance optimization
+- ✅ Revenue attribution
+- ✅ Data-driven decision making
+
+### Professional Practices
+- ✅ Comprehensive documentation
+- ✅ Automated testing
+- ✅ Code organization
+- ✅ Version control best practices
+
+## About This Project
+
+This is a **personal portfolio project** created to demonstrate advanced analytics engineering capabilities. It showcases my ability to:
+
+1. Design and implement complex data models
+2. Optimize performance for large datasets
+3. Implement data governance frameworks
+4. Integrate ML models with analytics pipelines
+5. Build production-ready data solutions
+
+The project uses simulated advertising campaign data to demonstrate real-world analytics scenarios that businesses face when managing user acquisition across multiple platforms and networks.
+
 ## Contributing
 
-1. Create a feature branch
-2. Add models following the naming conventions
-3. Add tests for new models
-4. Update documentation
-5. Create a pull request
+This is a personal portfolio project, but I welcome feedback and suggestions for improvement. Feel free to:
+- Open issues for bugs or suggestions
+- Fork and experiment with the code
+- Use it as a learning resource
 
 ## License
 
-This project is proprietary and confidential.
+This project is open source and available for educational purposes.
 
-## Support
+## Connect
 
-For issues and questions, please contact the data engineering team.
+- **GitHub**: [\[Your GitHub Profile\]](https://github.com/fefecoding)
+- **LinkedIn**: [\[Your LinkedIn Profile\]](https://www.linkedin.com/in/trannammai/)
+
+---
+
+*Built with ❤️ by [Your Name] - Analytics Engineer*

@@ -1,5 +1,8 @@
-name: 'voodoo_case'
+name: 'ua_analytics_portfolio'
 version: '1.0.0'
+
+# Personal project configuration
+# This is a portfolio project demonstrating advanced analytics engineering skills
 
 profile: 'voodoo_case'
 
@@ -15,7 +18,7 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  voodoo_case:
+  ua_analytics_portfolio:
     +materialized: view
     
     staging:
@@ -73,7 +76,7 @@ models:
         +unique_key: lineage_id
 
 seeds:
-  voodoo_case:
+  ua_analytics_portfolio:
     spend:
       +file: seeds/spend.csv
       +header: true
@@ -93,7 +96,7 @@ seeds:
 
 # Data quality tests configuration
 tests:
-  voodoo_case:
+  ua_analytics_portfolio:
     +severity: warn
     +store_failures: true
     +fail_calc: count(*)
@@ -101,8 +104,8 @@ tests:
 
 # On-run-start hooks for data governance
 on-run-start:
-  - "{{ log('Starting dbt run - Performance and Governance Optimized', info=True) }}"
-  - "ALTER SESSION SET QUERY_TAG = 'voodoo_case_{{ run_started_at }}'"
+  - "{{ log('Starting dbt run - Portfolio Project: User Acquisition Analytics', info=True) }}"
+  - "ALTER SESSION SET QUERY_TAG = 'ua_portfolio_{{ run_started_at }}'"
 
 # On-run-end hooks
 on-run-end:

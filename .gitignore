@@ -1,0 +1,51 @@
+# dbt
+/target/
+/dbt_packages/
+/logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Database credentials
+*.json
+!dbt_packages.yml
+!dbt_project.yml
+
+# Jupyter notebooks
+.ipynb_checkpoints
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.coveragerc
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.log
