@@ -1,9 +1,9 @@
 # User Acquisition Analytics Portfolio Project
 ## Project Overview
 
-This is a **personal portfolio project** showcasing my ability to build production-grade data pipelines for user acquisition analytics. The project processes advertising campaign data to provide insights into campaign performance, user acquisition metrics, and revenue optimization.
+The idea behind this project was to build a solid, production-ready data pipeline focused on user acquisition use case. It ingests campaign data, processes it, and then helps answer key questions, like which campaigns are working, how users are coming in, and how we can improve revenue. The source data is ingested via dbt seeds.
 
-### Key Features Demonstrated
+### Key Features
 
 ✅ **Advanced dbt Modeling** - Multi-layer architecture with staging, mart, and governance layers  
 ✅ **Performance Optimization** - Partitioning, clustering, and incremental models  
@@ -99,8 +99,8 @@ cluster_by: ["platform_id", "network_id", "campaign_id"]
 ## Getting Started
 
 ### Prerequisites
-- dbt Core or dbt Cloud
-- BigQuery (or compatible data warehouse)
+- dbt Core / dbt Cloud
+- BigQuery
 - Python 3.8+
 
 ### Installation
@@ -110,7 +110,7 @@ cluster_by: ["platform_id", "network_id", "campaign_id"]
 dbt deps
 ```
 
-2. Configure your profile in `profiles.yml`:
+2. Configure profile in `profiles.yml`:
 ```yaml
 voodoo_case:
   target: dev
@@ -118,8 +118,8 @@ voodoo_case:
     dev:
       type: bigquery
       method: service-account
-      project: your-project-id
-      dataset: your_dataset
+      project: project-id
+      dataset: dataset_id
       keyfile: path/to/keyfile.json
 ```
 
@@ -216,27 +216,6 @@ ORDER BY cs.campaign_health_score DESC;
 - **Python** - ML analysis and forecasting
 - **dbt_utils** - Utility macros and functions
 - **dbt_date** - Date handling utilities
-
-## What This Project Demonstrates
-
-### Technical Skills
-- ✅ Advanced dbt modeling patterns
-- ✅ Performance optimization techniques
-- ✅ Data governance implementation
-- ✅ ML integration with analytics
-- ✅ Production-ready code quality
-
-### Business Acumen
-- ✅ User acquisition analytics
-- ✅ Campaign performance optimization
-- ✅ Revenue attribution
-- ✅ Data-driven decision making
-
-### Professional Practices
-- ✅ Comprehensive documentation
-- ✅ Automated testing
-- ✅ Code organization
-- ✅ Version control best practices
 
 
 ## Connect
